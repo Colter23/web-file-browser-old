@@ -1,0 +1,46 @@
+{
+  "path": "/user",
+  "folder": [
+    {
+      "path": "/user/colter",
+      "name": "colter",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/docker",
+      "name": "docker",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/files",
+      "name": "files",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/resource",
+      "name": "resource",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/sync",
+      "name": "sync",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/domains",
+      "name": "domains",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/DCIM",
+      "name": "DCIM",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/appdata",
+      "name": "appdata",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    }
+  ],
+  "file": []
+}

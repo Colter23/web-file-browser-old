@@ -1,0 +1,107 @@
+{
+  "path": "/user/docker",
+  "folder": [
+    {
+      "path": "/user/docker/alist",
+      "name": "alist",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/docker/emby",
+      "name": "emby",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/docker/gitea",
+      "name": "gitea",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/docker/plex",
+      "name": "plex",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/docker/nas-tools",
+      "name": "nas-tools",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/docker/swag",
+      "name": "swag",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    }
+  ],
+  "file": [
+    {
+      "path": "/user/docker/config.json",
+      "name": "config.json",
+      "size": 22,
+      "extension": ".json",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/docker/data.db",
+      "name": "data.db",
+      "size": 22,
+      "extension": ".db",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/docker/log",
+      "name": "log",
+      "size": 22,
+      "extension": "",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/docker/nginx.conf",
+      "name": "nginx.conf",
+      "size": 22,
+      "extension": ".conf",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/docker/app.yml",
+      "name": "app.yml",
+      "size": 22,
+      "extension": ".yml",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/docker/device.txt",
+      "name": "device.txt",
+      "size": 22,
+      "extension": ".txt",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/docker/bg.png",
+      "name": "bg.png",
+      "size": 22,
+      "extension": ".png",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/docker/bg.jpg",
+      "name": "bg.jpg",
+      "size": 22,
+      "extension": ".jpg",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/docker/config.xml",
+      "name": "config.xml",
+      "size": 22,
+      "extension": ".xml",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    },
+    {
+      "path": "/user/docker/video.mp4",
+      "name": "video.mp4",
+      "size": 22,
+      "extension": ".mp4",
+      "modified": "2023-09-29T05:29:52.08629158Z"
+    }
+  ]
+}
