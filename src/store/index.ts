@@ -1,14 +1,12 @@
-import { createStore } from 'vuex'
+import { defineStore } from 'pinia'
+import { FileInfo } from "../class.ts";
 
-export default createStore({
-    state: {
-        editFileList: [],
-        // editorFile
+
+export const useUserStore = defineStore('editor', {
+    state: () => {
+        return {
+            editFileList: [] as FileInfo[],
+        }
     },
-    mutations: {
-    },
-    actions: {
-    },
-    modules: {
-    }
 })
+
