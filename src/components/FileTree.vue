@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useStore } from 'vuex'
 import { events } from '../bus.js'
+import { useEditorStore } from '../store'
 
 import userFolder from "../assets/folder.json"
 import dockerFolder from "../assets/docker.json"
@@ -14,9 +14,9 @@ import {
   ChevronForward
 } from '@vicons/ionicons5'
 import {TreeOptions} from "naive-ui/es/tree/src/interface";
-import axios from "axios";
 
 
+const editorStore = useEditorStore()
 
 const genIcon = (icon: any) => h(NIcon, null, {default: () => h(icon)})
 const fileIcon = () => genIcon(FileTrayFullOutline)
@@ -47,7 +47,7 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
       if (option.isLeaf) {
         console.log('[Click] ' + option.label)
         events.emit('openFile', option)
-
+        editorStore.$state.editFileList.push()
       }
     },
   }

@@ -9,7 +9,7 @@ import dockerFile from "../assets/docker.json"
 
 import {events} from "../bus.ts";
 import {FileInfo} from "../class.ts";
-import axios from "axios";
+
 
 ace.config.setModuleUrl('ace/mode/base_worker', "ace-editor/worker-base.js")
 ace.config.setModuleUrl('ace/mode/css_worker', "ace-editor/worker-css.js")
