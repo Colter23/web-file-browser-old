@@ -2,7 +2,6 @@
 import {
   NTabs,
   NTab,
-  TreeOption,
   NLayoutHeader,
   NBreadcrumbItem,
   NSpace,
@@ -11,76 +10,17 @@ import {
   NLayoutFooter,
   NLayoutContent, NButton, NSelect
 } from 'naive-ui'
-import {onBeforeUnmount, onMounted, reactive, ref, watch} from "vue";
-import { events } from '../bus.js'
+import { ref, watch } from "vue";
 import CodeEditor from "./CodeEditor.vue";
-import {FileInfo} from "../class.ts";
+import languageList from '../assets/language_mode.json'
+import {useEditorStore} from "../store";
 
 
-// 当前Tab
-const currTab = ref('')
-let fileInfo: FileInfo = reactive({path: '', mode: 'ace/mode/text'})
+// 编辑器数据仓库
+const editorStore = useEditorStore();
 
 // Tab列表
-// const tabPanels = ref([])
-const tabPanels = ref(new Map())
-
-// 当前文件路径
-// let path = ref("")
-
-onMounted(()=>{
-  events.on('openFile',(message)=>{
-    const file = message as TreeOption
-    const key = file.key! as string
-    tabPanels.value.set(key, file.label)
-    // tabPanels.value[key] = file.label
-
-    // path.value = key
-    const mode = checkFileLanguageMode(key)
-    fileInfo = {
-      path: key,
-      mode: mode
-    }
-
-    currTab.value = key
-    languageMode.value = mode
-  })
-})
-onBeforeUnmount(()=>{
-  events.off('openFile')
-})
-
-
-function handleClose (path: string) {
-  const { value: panels } = tabPanels
-  panels.delete(path)
-  // delete panels[path]
-  //panels.splice(index, 1)
-  events.emit('closeFile', path)
-  if (currTab.value === path) {
-    currTab.value = ''
-  }
-}
-function handleAdd() {
-  // tabPanels.value.push('test.txt')
-  console.log("aaaaa")
-}
-
-function updateTab(value: string) {
-  console.log('[Update] ' + value)
-  currTab.value = value
-}
-
-function checkFileLanguageMode(path: string): string {
-  const mode: LanguageMode | undefined = modes.find(mode => {
-    return mode.reg.exec(path) != null
-  })
-  if (mode != undefined)
-    return mode.mode
-  else
-    return 'ace/mode/text'
-}
-
+const tabPanels = ref(new Map());
 
 interface LanguageMode {
   name: string;
@@ -88,68 +28,85 @@ interface LanguageMode {
   mode: string
 }
 
-const modes: LanguageMode[] = []
-const languageList = [
-  ["Apache Conf", "^htaccess$|^htgroups$|^htpasswd$|^conf$|^.*\\.htaccess$|^.*\\.htgroups$|^.*\\.htpasswd$", "ace/mode/apache_conf"],
-  ["AsciiDoc", "^.*\\.(asciidoc|adoc)$", "ace/mode/asciidoc"],
-  ["C/C++", "^.*\\.(cpp|c|cc|cxx|h|hh|hpp|ino)$", "ace/mode/c_cpp"],
-  ["C#", "^.*\\.(cs)$", "ace/mode/csharp"],
-  ["CSS", "^.*\\.(css)$", "ace/mode/css"],
-  ["Dart", "^.*\\.(dart)$", "ace/mode/dart"],
-  ["Dockerfile", "^Dockerfile$", "ace/mode/dockerfile"],
-  ["Go", "^.*\\.(go)$", "ace/mode/golang"],
-  ["Groovy", "^.*\\.(groovy)$", "ace/mode/groovy"],
-  ["HTML", "^.*\\.(html|htm|xhtml|vue|we|wpy)$", "ace/mode/html"],
-  ["INI", "^.*\\.(ini|cfg|prefs)$", "ace/mode/ini"],
-  ["Java", "^.*\\.(java)$", "ace/mode/java"],
-  ["JavaScript", "^.*\\.(js|jsm|jsx|cjs|mjs)$", "ace/mode/javascript"],
-  ["JSON", "^.*\\.(json)$", "ace/mode/json"],
-  ["JSP", "^.*\\.(jsp)$", "ace/mode/jsp"],
-  ["Kotlin", "^.*\\.(kt|kts)$", "ace/mode/kotlin"],
-  ["Log", "^.*\\.(log)$", "ace/mode/log"],
-  ["Lua", "^.*\\.(lua)$", "ace/mode/lua"],
-  ["Markdown", "^.*\\.(md|markdown)$", "ace/mode/markdown"],
-  ["MATLAB", "^.*\\.(matlab)$", "ace/mode/matlab"],
-  ["MySQL", "^.*\\.(mysql)$", "ace/mode/mysql"],
-  ["Nginx", "^.*\\.(nginx|conf)$", "ace/mode/nginx"],
-  ["pgSQL", "^.*\\.(pgsql)$", "ace/mode/pgsql"],
-  ["PHP", "^.*\\.(php|inc|phtml|shtml|php3|php4|php5|phps|phpt|aw|ctp|module)$", "ace/mode/php"],
-  ["Powershell", "^.*\\.(ps1)$", "ace/mode/powershell"],
-  ["Properties", "^.*\\.(properties)$", "ace/mode/properties"],
-  ["Protobuf", "^.*\\.(proto)$", "ace/mode/protobuf"],
-  ["Python", "^.*\\.(py)$", "ace/mode/python"],
-  ["Ruby", "rb$|^.*\\.ru$|^.*\\.gemspec$|^.*\\.rake$|^Guardfile$|^Rakefile$|^Gemfile$", "ace/mode/ruby"],
-  ["Rust", "^.*\\.(rs)$", "ace/mode/rust"],
-  ["SQL", "^.*\\.(sql)$", "ace/mode/sql"],
-  ["Swift", "^.*\\.(swift)$", "ace/mode/swift"],
-  ["Text", "^.*\\.(txt)$", "ace/mode/text"],
-  ["Toml", "^.*\\.(toml)$", "ace/mode/toml"],
-  ["Typescript", "^.*\\.(ts|mts|cts|typescript|str)$", "ace/mode/typescript"],
-  ["XML", "^.*\\.(xml|rdf|rss|wsdl|xslt|atom|mathml|mml|xul|xbl|xaml)$", "ace/mode/xml"],
-  ["YAML", "^.*\\.(yaml|yml)$", "ace/mode/yaml"]
-]
+const modes: LanguageMode[] = [];
+
+// 语言模型
+const languageMode = ref("ace/mode/text");
+// 语言模型选项
+const languageOptions: object[] = [];
 
 
-const languageMode = ref("ace/mode/text")
-const options: object[] = []
-
-watch(languageMode, (value: string) => {
-  // console.log(value)
-  events.emit('changeMode', value)
-})
-
-languageList.forEach((lan: string[]) => {
+// 处理语言模型
+languageList['mode'].forEach((lan: string[]) => {
   modes.push({
     name: lan[0],
     reg: new RegExp(lan[1], "gi"),
     mode: lan[2]
-  })
-  options.push({
+  });
+  languageOptions.push({
     label: lan[0],
     value: lan[2]
-  })
+  });
 })
 
+
+// 监听当前编辑文件路径变化
+watch(() => editorStore.currentFile, (key: string) => {
+  const file = editorStore.getCurrentEditFileInfo();
+  if (!file) return;
+  // 当 mode 为空时，检测更新文件语言
+  if (file.mode == undefined) {
+    tabPanels.value.set(key, file.name);
+
+    const mode = checkFileLanguageMode(key);
+    editorStore.updateCurrentEditFileMode(mode);
+    languageMode.value = mode;
+  }else {
+    languageMode.value = file.mode;
+  }
+});
+
+// 关闭标签处理函数
+function handleClose (path: string) {
+  console.log("%c[Close] " + path, 'background: rgb(255 129 129)');
+  // const { value: panels } = tabPanels;
+  tabPanels.value.delete(path);
+  editorStore.deleteEditFile(path);
+  if (editorStore.currentFile === path) {
+    editorStore.currentFile = '';
+  }
+}
+
+// 新建空标签处理函数
+function handleAdd() {
+  // TODO("新建空标签");
+  console.log("%c[TODO] Add", 'background: #4aa2ff');
+}
+
+// 更新 tab
+function updateTab(value: string) {
+  console.log('[Tab] ' + value);
+  editorStore.currentFile = value;
+  languageMode.value = editorStore.getCurrentEditFileInfo().mode;
+}
+
+// 更新语言模型
+function handleUpdateMode(value: string) {
+  console.log('[Mode] ' + value);
+  editorStore.updateCurrentEditFileMode(value);
+}
+
+
+// 检查文件语言
+function checkFileLanguageMode(path: string): string {
+  const mode: LanguageMode | undefined = modes.find(mode => {
+    return mode.reg.exec(path) != null;
+  })
+  if (mode != undefined)
+    return mode.mode;
+  else
+    return 'ace/mode/text';
+}
 
 </script>
 
@@ -158,12 +115,18 @@ languageList.forEach((lan: string[]) => {
     <n-layout-header>
       <n-space>
         <n-button type="info">Info</n-button>
-        <n-select filterable placeholder="语言" v-model:value="languageMode" :options="options" />
+        <n-select 
+            filterable 
+            placeholder="语言" 
+            v-model:value="languageMode"
+            :options="languageOptions"
+            @update:value="handleUpdateMode"
+        />
       </n-space>
     </n-layout-header>
     <n-layout-content content-class="editor-layout-content">
       <n-tabs
-          v-model:value="currTab"
+          v-model:value="editorStore.currentFile"
           type="card"
           addable
           closable
@@ -181,13 +144,11 @@ languageList.forEach((lan: string[]) => {
           {{ tab[1] }}
         </n-tab>
       </n-tabs>
-      <code-editor :info="fileInfo" :curr-tab="currTab"></code-editor>
+      <code-editor></code-editor>
     </n-layout-content>
     <n-layout-footer>
       <n-breadcrumb>
-        <n-breadcrumb-item>root</n-breadcrumb-item>
-        <n-breadcrumb-item>user</n-breadcrumb-item>
-        <n-breadcrumb-item>docker</n-breadcrumb-item>
+        <n-breadcrumb-item v-for="path in editorStore.currentFile.split('/')">{{ path }}</n-breadcrumb-item>
       </n-breadcrumb>
     </n-layout-footer>
   </n-layout>

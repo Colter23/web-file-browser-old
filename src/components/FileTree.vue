@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { events } from '../bus.js'
 import { useEditorStore } from '../store'
 
 import userFolder from "../assets/folder.json"
@@ -14,15 +13,22 @@ import {
   ChevronForward
 } from '@vicons/ionicons5'
 import {TreeOptions} from "naive-ui/es/tree/src/interface";
+import {FileInfo, FolderData, FolderInfo} from "../class.ts";
 
+// 文件原始信息列表
+const rawFileList: Map<String, FileInfo> = new Map();
 
-const editorStore = useEditorStore()
+// 编辑器数据仓库
+const editorStore = useEditorStore();
 
-const genIcon = (icon: any) => h(NIcon, null, {default: () => h(icon)})
-const fileIcon = () => genIcon(FileTrayFullOutline)
-const folderIcon = () => genIcon(Folder)
-const folderOpenIcon = () => genIcon(FolderOpenOutline)
+// 创建图标元素
+const genIcon = (icon: any) => h(NIcon, null, {default: () => h(icon)});
+const fileIcon = () => genIcon(FileTrayFullOutline);
+const folderIcon = () => genIcon(Folder);
+const folderOpenIcon = () => genIcon(FolderOpenOutline);
+const renderSwitcherIcon = () => genIcon(ChevronForward);
 
+// 更新文件夹展开图标
 const updatePrefixWithExpaned = (
     _keys: Array<string | number>,
     _option: Array<TreeOption | null>,
@@ -41,56 +47,39 @@ const updatePrefixWithExpaned = (
       break
   }
 }
+
+// 文件树事件
 const nodeProps = ({ option }: { option: TreeOption }) => {
   return {
+    // 双击文件事件
     ondblclick() {
+      // 仅叶子节点（文件）触发
       if (option.isLeaf) {
-        console.log('[Click] ' + option.label)
-        events.emit('openFile', option)
-        editorStore.$state.editFileList.push()
+        console.log('%c[Click] ' + option.label, 'background:rgba(133,108,217,1)');
+
+        const fileKey = option.key as string;
+        if (editorStore.getEditFileInfo(fileKey) == undefined) {
+          editorStore.addEditFile(fileKey, rawFileList.get(fileKey));
+        }
+        editorStore.currentFile = fileKey;
       }
     },
-  }
+  };
 }
 
-const renderSwitcherIcon = () => h(NIcon, null, { default: () => h(ChevronForward) })
-
+// 异步加载文件树数据
 const handleLoad = (node: TreeOption) => {
   return new Promise<void>((resolve) => {
     // setTimeout(() => {
       node.children = convertFolderData(getFolderData(node.key as string));
-      resolve()
+      resolve();
     // }, 1000)
-  })
+  });
 }
 
-type FolderInfos = FolderInfo[]
-type FileInfos = FileInfo[]
-
-interface FolderData {
-  path: string;
-  folder?: FolderInfos;
-  file?: FileInfos;
-}
-
-interface FolderInfo {
-  path: string;
-  name: string;
-  modified: string;
-}
-
-interface FileInfo {
-  path: string;
-  name: string;
-  size: number;
-  extension: string;
-  modified: string;
-}
-
-
+// 转换文件夹数据到文件树
 function convertFolderData(data: FolderData): TreeOptions {
-
-  const treeData: TreeOptions = []
+  const treeData: TreeOptions = [];
 
   data.folder?.forEach((folder: FolderInfo) => {
     treeData.push({
@@ -98,7 +87,7 @@ function convertFolderData(data: FolderData): TreeOptions {
       label: folder.name,
       isLeaf: false,
       prefix: folderIcon
-    })
+    });
   })
 
   data.file?.forEach((file: FileInfo) => {
@@ -107,26 +96,31 @@ function convertFolderData(data: FolderData): TreeOptions {
       label: file.name,
       isLeaf: true,
       prefix: fileIcon
-    })
+    });
+
+    // 将文件添加到列表
+    rawFileList.set(file.path, file);
   })
 
   return treeData;
 }
 
+// 临时获取文件夹数据
 function getFolderData(path: string): FolderData {
+  // TODO("使用 axios 获取文件夹数据")
   if (path == '/user') {
-    return userFolder as FolderData
+    return userFolder as FolderData;
   }else if (path == "/user/docker") {
-    return dockerFolder as FolderData
+    return dockerFolder as FolderData;
   } else {
     return {
       path: path
-    } as FolderData
+    } as FolderData;
   }
 }
 
-const data = ref(convertFolderData(getFolderData('/user')))
-
+// 获取根目录数据
+const data = ref(convertFolderData(getFolderData('/user')));
 
 </script>
 
@@ -148,8 +142,6 @@ const data = ref(convertFolderData(getFolderData('/user')))
 
 <style scoped>
 .tree {
-  /*background: #181825;*/
-
   max-height: 100vh;
   height: 100vh;
   overflow: auto;
