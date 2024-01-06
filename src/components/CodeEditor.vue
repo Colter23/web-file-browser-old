@@ -3,8 +3,8 @@ import ace, {EditSession} from "ace-builds"
 import {onMounted, watch} from "vue";
 import 'ace-builds/src-noconflict/ext-language_tools'
 import 'ace-builds/esm-resolver'
-import dockerFile from "../assets/docker.json"
 import {useEditorStore} from "../store";
+import axios from "axios";
 
 // 导入语言工作文件（用于语法提示）
 ace.config.setModuleUrl('ace/mode/base_worker', "ace-editor/worker-base.js")
@@ -34,14 +34,14 @@ onMounted(() => {
   });
 
   // 监听当前编辑文件变化
-  watch(() => editorStore.currentFile, (value: string) => {
+  watch(() => editorStore.currentFile, async (value: string) => {
     if (value == '') {
       editor.setSession(new EditSession(''))
-    }else {
+    } else {
       const file = editorStore.getCurrentEditFileInfo();
       if (file.session == undefined) {
         console.log('[Session] ' + value)
-        const newSession = new EditSession(getFileData(value));
+        const newSession = new EditSession(await getFileData(value));
         newSession.setMode(file.mode);
         editor.setSession(newSession);
         file.session = newSession
@@ -53,13 +53,13 @@ onMounted(() => {
 
 })
 
-// 返回临时假数据
-function getFileData(path: string): string {
+// 临时返回文件数据
+async function getFileData(path: string): Promise<string> {
   console.log('%c[Axios] ' + path, 'background: #1db361');
-  if (path.endsWith('.json')) {
-    return JSON.stringify(dockerFile, null, 2);
-  }
-  return path;
+
+  return await axios.get("http://127.0.0.1:8080/file" + path).then(res => {
+    return res.data;
+  })
 }
 
 </script>

@@ -1,19 +1,11 @@
 <script setup lang="ts">
-import { useEditorStore } from '../store'
-
-import userFolder from "../assets/folder.json"
-import dockerFolder from "../assets/docker.json"
-
-import {h, ref} from 'vue'
-import { NTree, NIcon, TreeOption } from 'naive-ui'
-import {
-  Folder,
-  FolderOpenOutline,
-  FileTrayFullOutline,
-  ChevronForward
-} from '@vicons/ionicons5'
+import {useEditorStore} from '../store'
+import {h, Ref, ref} from 'vue'
+import {NIcon, NTree, TreeOption} from 'naive-ui'
+import {ChevronForward, FileTrayFullOutline, Folder, FolderOpenOutline} from '@vicons/ionicons5'
 import {TreeOptions} from "naive-ui/es/tree/src/interface";
 import {FileInfo, FolderData, FolderInfo} from "../class.ts";
+import axios from "axios";
 
 // 文件原始信息列表
 const rawFileList: Map<String, FileInfo> = new Map();
@@ -69,11 +61,9 @@ const nodeProps = ({ option }: { option: TreeOption }) => {
 
 // 异步加载文件树数据
 const handleLoad = (node: TreeOption) => {
-  return new Promise<void>((resolve) => {
-    // setTimeout(() => {
-      node.children = convertFolderData(getFolderData(node.key as string));
-      resolve();
-    // }, 1000)
+  return new Promise<void>(async (resolve) => {
+    node.children = convertFolderData(await getFolderData(node.key as string));
+    resolve();
   });
 }
 
@@ -106,21 +96,20 @@ function convertFolderData(data: FolderData): TreeOptions {
 }
 
 // 临时获取文件夹数据
-function getFolderData(path: string): FolderData {
-  // TODO("使用 axios 获取文件夹数据")
-  if (path == '/user') {
-    return userFolder as FolderData;
-  }else if (path == "/user/docker") {
-    return dockerFolder as FolderData;
-  } else {
-    return {
-      path: path
-    } as FolderData;
-  }
+async function getFolderData(path: string): Promise<FolderData> {
+  return await axios.get("http://127.0.0.1:8080/file" + path).then(res => {
+    return res.data as FolderData;
+  })
 }
 
+const treeData: Ref<TreeOptions> = ref();
+
 // 获取根目录数据
-const data = ref(convertFolderData(getFolderData('/user')));
+getFolderData('/').then(data => {
+  console.log(data)
+  treeData.value = convertFolderData(data);
+});
+
 
 </script>
 
@@ -130,7 +119,7 @@ const data = ref(convertFolderData(getFolderData('/user')));
         block-line
         expand-on-click
         :show-line="true"
-        :data="data"
+        :data="treeData"
         :on-load="handleLoad"
         :node-props="nodeProps"
         check-strategy="all"
