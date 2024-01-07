@@ -3,7 +3,7 @@ import {EditFileInfo, EditorSession} from "../class.ts";
 
 
 export const useEditorStore = defineStore('editor', {
-    state: (): PiniaState => ({
+    state: (): EditorState => ({
         // 当前编辑文件路径
         currentFile: '' as string,
         // 编辑文件信息列表  key为文件路径
@@ -49,7 +49,7 @@ export const useEditorStore = defineStore('editor', {
     }
 })
 
-declare type PiniaState = {
+declare type EditorState = {
     editFileList: Map<string, EditFileInfo>;
     currentFile: string;
 }
