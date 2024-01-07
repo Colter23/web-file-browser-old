@@ -21,6 +21,8 @@ export const useEditorStore = defineStore('editor', {
 
         // 添加编辑文件
         addEditFile(key: string, info: EditFileInfo) {
+            delete info.mode;
+            delete info.session;
             this.editFileList.set(key, info);
         },
         // 更新文件session
