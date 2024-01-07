@@ -5,7 +5,7 @@ import {NIcon, NTree, TreeOption} from 'naive-ui'
 import {ChevronForward, FileTrayFullOutline, Folder, FolderOpenOutline} from '@vicons/ionicons5'
 import {TreeOptions} from "naive-ui/es/tree/src/interface";
 import {FileInfo, FolderData, FolderInfo} from "../class.ts";
-import axios from "axios";
+import network from "../network";
 
 // 文件原始信息列表
 const rawFileList: Map<String, FileInfo> = new Map();
@@ -97,9 +97,7 @@ function convertFolderData(data: FolderData): TreeOptions {
 
 // 临时获取文件夹数据
 async function getFolderData(path: string): Promise<FolderData> {
-  return await axios.get("http://127.0.0.1:8080/file" + path).then(res => {
-    return res.data as FolderData;
-  })
+  return (await network.get(`file${path}`)).data
 }
 
 const treeData: Ref<TreeOptions> = ref();

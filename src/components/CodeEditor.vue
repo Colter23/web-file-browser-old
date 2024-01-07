@@ -4,7 +4,7 @@ import {onMounted, watch} from "vue";
 import 'ace-builds/src-noconflict/ext-language_tools'
 import 'ace-builds/esm-resolver'
 import {useEditorStore} from "../store";
-import axios from "axios";
+import network from "../network";
 
 // 导入语言工作文件（用于语法提示）
 ace.config.setModuleUrl('ace/mode/base_worker', "ace-editor/worker-base.js")
@@ -56,10 +56,8 @@ onMounted(() => {
 // 临时返回文件数据
 async function getFileData(path: string): Promise<string> {
   console.log('%c[Axios] ' + path, 'background: #1db361');
-
-  return await axios.get("http://127.0.0.1:8080/file" + path).then(res => {
-    return res.data;
-  })
+  const resp = await network.get(`file${path}`);
+  return resp.data;
 }
 
 </script>
