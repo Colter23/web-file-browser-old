@@ -100,7 +100,7 @@ function handleUpdateMode(value: string) {
 // 检查文件语言
 function checkFileLanguageMode(path: string): string {
   const mode: LanguageMode | undefined = modes.find(mode => {
-    return path.match(mode.reg);
+    return mode.reg.exec(path) != null;
   })
   if (mode != undefined)
     return mode.mode;
