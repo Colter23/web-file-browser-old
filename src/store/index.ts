@@ -3,7 +3,7 @@ import {EditFileInfo, EditorSession} from "../class.ts";
 
 
 export const useEditorStore = defineStore('editor', {
-    state: () => ({
+    state: (): PiniaState => ({
         // 当前编辑文件路径
         currentFile: '' as string,
         // 编辑文件信息列表  key为文件路径
@@ -41,6 +41,9 @@ export const useEditorStore = defineStore('editor', {
         },
         // 删除编辑文件
         deleteEditFile(key: string): boolean {
+            const deleteItem = this.editFileList.get(key);
+            delete deleteItem.mode;
+            delete deleteItem.session;
             this.editFileList.delete(key);
             return true
         },
@@ -48,3 +51,7 @@ export const useEditorStore = defineStore('editor', {
     }
 })
 
+declare type PiniaState = {
+    editFileList: Map<string, EditFileInfo>;
+    currentFile: string;
+}
