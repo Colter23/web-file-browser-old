@@ -100,7 +100,7 @@ function handleUpdateMode(value: string) {
 // 检查文件语言
 function checkFileLanguageMode(path: string): string {
   const mode: LanguageMode | undefined = modes.find(mode => {
-    return mode.reg.exec(path) != null;
+    return path.match(mode.reg);
   })
   if (mode != undefined)
     return mode.mode;
@@ -111,7 +111,7 @@ function checkFileLanguageMode(path: string): string {
 </script>
 
 <template>
-  <n-layout content-class="editor-layout">
+  <n-layout class="editor-container" content-class="editor-layout">
     <n-layout-header>
       <n-space>
         <n-button type="info">Info</n-button>
@@ -156,7 +156,13 @@ function checkFileLanguageMode(path: string): string {
 
 </template>
 
-<style >
+<style scoped>
+.editor-container {
+  height: 100vh;
+}
+</style>
+
+<style>
 .editor-layout{
   display: flex;
   flex-direction: column;
